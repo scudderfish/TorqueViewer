@@ -167,14 +167,14 @@ function setCaptureDate(dte) {
 
 function createSeries(data) {
 	var series= {};
-	headers=data[0].split('\t')
+	headers=data[0].split(',')
 	for(var i = 0;i<headers.length;i++) {
 		headers[i]=headers[i].trim()
 		series[headers[i]]=[];
 	}
 
 	for (var i = 1 ; i < data.length;i++) {
-		var values=data[i].split('\t')
+		var values=data[i].split(',')
 		for (var j=0;j<values.length;j++) {
 			series[headers[j]].push(Number(values[j]))
 		}
