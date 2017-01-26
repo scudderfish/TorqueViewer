@@ -121,7 +121,7 @@ function loadFile(file){
 	reader.onload = function(e) {
 		processData(reader.result);
 		setupSelectors()
-		setOptionDefaults("RPM","CLT","MAT")
+		setOptionDefaults("Engine RPM(rpm)","Engine Coolant Temperature(�C)","Intake Manifold Pressure(psi)")
 		resetChart()
 	}
 	reader.readAsText(file);	
@@ -146,8 +146,8 @@ function setupSelectors() {
 
 function processData(data) {
 	var lines = data.split('\n');
-	var header=lines.splice(0,2);
-	setCaptureDate(header[1])
+//	var header=lines.splice(0,2);
+//	setCaptureDate(header[1])
 	var dataSeries = createSeries(lines)
 
 	var latitudes=dataSeries["Latitude"]
@@ -162,7 +162,6 @@ function processData(data) {
 
 
 function setCaptureDate(dte) {
-	dte=dte.replace(/['"]+/g, '')
 	document.getElementById('CaptureDate').innerText=dte;
 }
 
@@ -170,6 +169,7 @@ function createSeries(data) {
 	var series= {};
 	headers=data[0].split('\t')
 	for(var i = 0;i<headers.length;i++) {
+		headers[i]=headers[i].trim()
 		series[headers[i]]=[];
 	}
 
@@ -285,8 +285,8 @@ function createMapAndMarker(lat,lon){
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-90659374-1)', 'auto');
-  ga('send', 'pageview');
+//  ga('create', 'UA-90659374-1)', 'auto');
+//  ga('send', 'pageview');
 
 </script>
 <noscript id="deferred-styles">
