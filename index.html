@@ -121,7 +121,7 @@ function loadFile(file){
 	reader.onload = function(e) {
 		processData(reader.result);
 		setupSelectors()
-		setOptionDefaults("Engine RPM(rpm)","Engine Coolant Temperature(�C)","Intake Manifold Pressure(psi)")
+		setOptionDefaults("Engine RPM(rpm)","Throttle Position(Manifold)(%)","Intake Manifold Pressure(psi)")
 		resetChart()
 	}
 	reader.readAsText(file);	
