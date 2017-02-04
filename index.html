@@ -14,7 +14,7 @@
 	    border:1px solid black;
 	}
 	div#headings {
-	    width: 60%;
+	    width: 50%;
 	    height: 100%;
 	    float: left;
 	}
@@ -29,9 +29,12 @@
 		width:20%;
 	}
 	select {
+		width: 100%;
 		margin: 5px;
 	}
 	button {
+		float: right;
+		width: 80%;
 		margin: 5px;
 		width: 80%;
 	}
@@ -146,8 +149,6 @@ function setupSelectors() {
 
 function processData(data) {
 	var lines = data.split('\n');
-//	var header=lines.splice(0,2);
-//	setCaptureDate(header[1])
 	var dataSeries = createSeries(lines)
 
 	var latitudes=dataSeries["Latitude"]
@@ -176,7 +177,12 @@ function createSeries(data) {
 	for (var i = 1 ; i < data.length;i++) {
 		var values=data[i].split(',')
 		for (var j=0;j<values.length;j++) {
-			series[headers[j]].push(Number(values[j]))
+			var dataPoint=Number(values[j])
+			var seriesName=headers[j]
+			if(!(seriesName=="Longitude" || seriesName=="Latitude")){
+				dataPoint=Math.round(dataPoint*1000)/1000
+			}
+			series[seriesName].push(dataPoint)
 		}
 	}
 	series["headers"]=headers
@@ -260,13 +266,20 @@ function updateMap(p) {
     var index=(p["items"][0]["nodeindex"])
     var lat=ui["lat"][index]
     var lon=ui["lon"][index]
+    var accuracy=ui["dataSeries"]["Horizontal Dilution of Precision"][index]
 		if(!isNaN(lat) && !isNaN(lon)) {
 			if(ui["marker"] == null) {
 				ui["marker"] = L.marker([lat,lon]).addTo(ui["map"]);
 				ui["map"].setView([lat,lon],16)
 			}
-	    ui["map"].setView([lat,lon])
+			if(ui["errorCircle"] == null) {
+				console.log("Adding circle at lat:"+lat+" lon:"+lon);
+				ui["errorCircle"] = L.circle([lat,lon],20,{weight:1,opacity:0.2,fillOpacity:0.1}).addTo(ui["map"])	
+			}
+	    ui["map"].panTo([lat,lon])
   	  ui["marker"].setLatLng([lat,lon])
+  	  
+  	  ui["errorCircle"].setLatLng([lat,lon]).setRadius(accuracy);
   	}
 
 }
@@ -274,7 +287,7 @@ function createMapAndMarker(lat,lon){
 
 	var map = L.map('mapid');//.setView([lat, lon], 16);
 
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+	L.tileLayer('//{s}.tile.osm.org/{z}/{x}/{y}.png', {
 	    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 	    subdomains:'abc'
 	}).addTo(map);
